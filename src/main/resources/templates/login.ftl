@@ -12,7 +12,7 @@
 <body class="hold-transition login-page">
 <div class="login-box">
     <div class="login-logo">
-        <a href="${baseDir}"><b>Autozi</b> Cloud Portal</a>
+        <a href="${baseDir}"><b>Lemon</b> Data Center OS</a>
     </div>
     <!-- /.login-logo -->
     <div class="login-box-body">

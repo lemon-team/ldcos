@@ -16,7 +16,7 @@
         <small>${note!'Cloud Portal'}</small>
     </h1>
     <ol class="breadcrumb">
-        <li><a href=""><i class="fa fa-home"></i>Autozi Cloud Portal</a></li>
+        <li><a href=""><i class="fa fa-home"></i>Lemon Data Center OS</a></li>
         <#nested />
     </ol>
 </section>
