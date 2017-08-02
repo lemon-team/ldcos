@@ -19,21 +19,21 @@
         update_time
     </sql>
     <!-- 通过id查询 -->
-    <select id="findOne" resultType="com.ilemontech.ldcos.cloud.entity.UserEntity">
+    <select id="findOne" resultType="com.ilemontech.ldcos.entity.UserEntity">
         SELECT
         <include refid="columns" />
         FROM sys_user
         WHERE id = #{id}
     </select>
     <!-- 通过用户名查询用户 -->
-    <select id="findByUserName" resultType="com.ilemontech.ldcos.cloud.entity.UserEntity">
+    <select id="findByUserName" resultType="com.ilemontech.ldcos.entity.UserEntity">
         SELECT
         <include refid="columns" />
         FROM sys_user
         WHERE username = #{userName}
     </select>
     <!-- 动态查询 -->
-    <select id="findAllSelective" resultType="com.ilemontech.ldcos.cloud.entity.UserEntity">
+    <select id="findAllSelective" resultType="com.ilemontech.ldcos.entity.UserEntity">
         SELECT
         <include refid="columns" />
         FROM sys_user
@@ -68,7 +68,7 @@
         </where>
     </select>
     <!-- 模糊查询 -->
-    <select id="findAllByLikeAndSelective" resultType="com.ilemontech.ldcos.cloud.entity.UserEntity">
+    <select id="findAllByLikeAndSelective" resultType="com.ilemontech.ldcos.entity.UserEntity">
         SELECT
         <include refid="columns" />
         FROM sys_user

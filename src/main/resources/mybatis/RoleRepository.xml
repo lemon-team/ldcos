@@ -18,7 +18,7 @@
         VALUES (NULL ,#{name},#{type},#{status},#{remark},#{createTime},#{updateTime})
     </insert>
     <!-- 查找一条数据 -->
-    <select id="findOne" resultType="com.ilemontech.ldcos.cloud.entity.RoleEntity">
+    <select id="findOne" resultType="com.ilemontech.ldcos.entity.RoleEntity">
         SELECT
         <include refid="columns" />
         FROM sys_role
