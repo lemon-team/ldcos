@@ -10,19 +10,29 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.embedded.ConfigurableEmbeddedServletContainer;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
 import org.springframework.boot.web.servlet.ErrorPage;
+import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.context.annotation.ImportResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
+import com.ilemontech.ldcos.system.interceptor.LoginHandlerInterceptor;
+
 /**
  * 启动类
  * 
  */
-@SpringBootApplication
+@ServletComponentScan
+@SpringBootApplication  
+//@ImportResource({ "classpath:applicationContext.xml" })
+@EnableAspectJAutoProxy
+@ComponentScan(basePackages={"com.ilemontech.ldcos"})
 public class IdcosApplication extends WebMvcConfigurerAdapter {
 
 	private static Logger logger = LoggerFactory.getLogger(IdcosApplication.class);
@@ -70,10 +80,9 @@ public class IdcosApplication extends WebMvcConfigurerAdapter {
 	 * 配置拦截器
 	 */
 	public void addInterceptors(InterceptorRegistry registry) {
-		// registry.addInterceptor(new
-		// UserLoginInterceptor()).addPathPatterns("/**")
-		// .excludePathPatterns("/jyj/login","/jyj/logout","/jyj/getCaptcha")
-		// .excludePathPatterns("/b2bjs/**","/css/**","/images/**","/img/**","/jquery/**","/js/**","/styles/**","/favicon.ico");
+		registry.addInterceptor(new LoginHandlerInterceptor()).addPathPatterns("/**")
+		.excludePathPatterns("/login","/logout")
+		.excludePathPatterns("/adminlte/**","/app/**","/plugins/**","/favicon.ico");
 	}
 
 	public static void main(String[] args) {
