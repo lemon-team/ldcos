@@ -62,19 +62,9 @@
   <!-- Left side column. contains the logo and sidebar -->
   <aside class="main-sidebar">
     <!-- sidebar: style can be found in sidebar.less -->
-    <section class="sidebar">
+    <section class="sidebar" id="sidebar">
       <!-- sidebar menu: : style can be found in sidebar.less -->
-      <ul class="sidebar-menu" data-widget="tree">
-        <li class="active treeview">
-          <a href="#">
-            <i class="fa fa-dashboard"></i> <span>Dashboard</span>
-            <span class="pull-right-container">
-              <i class="fa fa-angle-left pull-right"></i>
-            </span>
-          </a>
-          <#include "/common/menu.html">
-        </li>      
-      </ul>
+      <#include "/common/menu.html">
     </section>
     <!-- /.sidebar -->
   </aside>
@@ -82,12 +72,17 @@
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
+    <!-- 
     <section class="content-header">
       <ol class="breadcrumb" style="left: 10px;">
         <li><a href="#"><i class="fa fa-dashboard"></i>Home</a></li>
         <li class="active">Dashboard</li>
       </ol>
     </section>
+    -->
+	<section class="content" id="page-content">
+		<!-- ajax load content -->
+	</section>
   </div>
   <!-- /.content-wrapper -->
   <#include "/common/footer.html">
@@ -111,5 +106,8 @@
 <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
 <!-- AdminLTE for demo purposes -->
 <script src="${staticPath}/adminlte/js/demo.js"></script>
+<script src="${staticPath}/app/js/common/common.js"></script>
+<script src="${staticPath}/app/js/common/jquery.twbsPagination.js"></script>
+<script src="${staticPath}/app/js/common/leftmenu.js"></script>
 </body>
 </html>

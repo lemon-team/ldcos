@@ -1,0 +1,16 @@
+<script type="text/javascript">
+$(function(){
+	generatePagingHtml("pagingDiv", "search-form",'${pageObject.currentPage}', '${pageObject.totalPage}', '${pageObject.pageSize}',pageselectCallback);
+})
+</script>
+<div class="row row_pagination" style="padding-top: 8px;padding-bottom:4px;">
+	<div class="col-xs-6">
+		<div class="dataTables_info" style="padding-top: 6px;">当前显示从第${pageObject.currentBegin}条到${pageObject.currentEnd}条 共${pageObject.totalCount }条记录</div>
+	</div>
+	<div class="col-xs-6">
+		<div class="dataTables_paginate paging_simple_numbers">
+			<ul id="pagingDiv" class="pagination">
+			</ul>
+		</div>
+	</div>
+</div>

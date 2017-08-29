@@ -16,4 +16,13 @@ public class IndexController extends BaseController {
 	public String index() {
 		return "index";
 	}
+	
+	
+	
+	
+	@RequestMapping(value="/system/common/leftMenu")
+	public String leftMenu(){
+		
+		return "/common/menu";
+	}
 }

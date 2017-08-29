@@ -1,0 +1,78 @@
+<script type="text/javascript">
+$(function(){
+	initSelectCheckBox();
+})
+</script>
+<table class="margin_b0 table table-striped table-bordered table-hover" id="resultTable">
+	<thead>
+		<tr>
+			<th class="center" width="10%">
+				<label class="pos-rel"> 
+					<input type="checkbox" class="ace checkboxall">
+					<span class="lbl"></span>
+				</label>
+			</th>
+			<th class="center">手机号</th>
+			<th class="center">昵称</th>
+			<th class="center">性别</th>
+			<th class="center">生日</th>
+			<th class="center">注册时间</th>
+			<th class="center">设备</th>
+			<th class="center">帐户余额</th>
+			<th class="center">是否冻结</th>
+		</tr>
+	</thead>
+	<tbody>
+		<c:forEach items="${pageObject.list }" var="item">
+			<tr>
+				<td class="center">
+					<label class="pos-rel">	
+					<input name="id" value="${item.id}" locked="${locked}" type="checkbox" class="ace">				
+					<span class="lbl"></span>
+					</label>
+				</td>
+				<td class="center">
+				<c:choose>				
+					<c:when test="${auth:hasPrivilege('user','view') }">
+						<a href="javascript:dialogView(${item.id})">${item.mobile }</a>
+					</c:when>
+					<c:otherwise>	
+						<a href="javascript:void(0)">${item.mobile }</a>
+					</c:otherwise>
+				</c:choose>
+				</td>
+				<td class="center">${item.nick }</td>
+				<td class="center">
+				<c:choose>
+					<c:when test="${item.sex==0 }">
+						女
+					</c:when>
+					<c:when test="${item.sex==1 }">
+						男
+					</c:when>
+					<c:when test="${item.sex==-1 }">
+						保密
+					</c:when>
+				</c:choose>
+				</td>				
+				<td class="center"><fmt:formatDate value="${item.birthday }" pattern="yyyy-MM-dd"/></td>
+				<td class="center"><fmt:formatDate value="${item.register }" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+				<td class="center">${item.device }</td>
+				<td class="center">
+				${empty item.balance ? '0' : item.balance}
+				
+				</td>
+				<td class="center">
+				<c:choose>
+					<c:when test="${item.locked==0 }">
+						未冻结
+					</c:when>
+					<c:when test="${item.locked==1 }">
+						冻结
+					</c:when>
+				</c:choose>
+				</td>
+			</tr>
+		</c:forEach>
+	</tbody>
+</table>

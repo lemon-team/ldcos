@@ -5,36 +5,6 @@ $(function(){
 //	$(document).ajaxStop(function(){
 //		$( "#loading").hide();
 //	});
-	
-     $.validator.addMethod("greaterThan", function(value, element, param) {
-    	 console.log(startDate);
-    	var startDate=$(param).val();
-    	if(startDate==''){
-    		return true;
-    	}
-    	var date1 = new Date(Date.parse(startDate.replace("-", "/")));
-        var date2 = new Date(Date.parse(value.replace("-", "/")));
-        return date1 <= date2;
-    },'结束日期必须大于等于开始日期 ');
-     
-     //zh-cn
-     $.datepicker.regional["zh-CN"] = { closeText: "关闭", prevText: "&#x3c;上月", nextText: "下月&#x3e;", currentText: "今天", monthNames: ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"], monthNamesShort: ["一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一", "十二"], dayNames: ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"], dayNamesShort: ["周日", "周一", "周二", "周三", "周四", "周五", "周六"], dayNamesMin: ["日", "一", "二", "三", "四", "五", "六"], weekHeader: "周", dateFormat: "yy-mm-dd", firstDay: 1, isRTL: !1, showMonthAfterYear: !0, yearSuffix: "年" }
-     $.datepicker.setDefaults($.datepicker.regional["zh-CN"]);
-	
-     //set default css style for validate
-	$.validator.setDefaults({
-		errorElement : 'div',
-		errorClass : 'help-block',
-		focusInvalid : false,
-		ignore : "",
-		highlight : function(e) {
-			$(e).closest('.form-group').removeClass('has-info').addClass('has-error');
-		},
-		success : function(e) {
-			$(e).closest('.form-group').removeClass('has-error');//.addClass('has-info');
-			$(e).remove();
-		}
-	});
 });
 $.ajaxSetup({
 	contentType: "application/x-www-form-urlencoded; charset=utf-8",
@@ -151,177 +121,6 @@ function dialogOk(message,fun){
 	$('#dialogOKModal').modal('show');
 }
 
-
-//详细列表
-function dialogView(id,action,title,cparams){
-	if(typeof(action)=='undefined'){
-		var action='view';
-	}
-	var url=contextPath+'/'+module+'/'+action+'.json';
-	var params={};
-	if(typeof(cparams)!='undefined'){
-		params=cparams;
-	}
-	params.id=id;
-	ajaxGetRequestFormData(url,params,function(data){
-		$('#dialogDetaiModalbody').html(data);
-		if(typeof(title)!='undefined' && title!=''){
-			$('#dialogDetailModal').find('h4').text(title);			
-		}
-		$('#dialogDetailModal').modal('show');
-	});
-}
-
-//信息提示框倒计时
-function dialogOkCD(message,fun){
-	var moduleName='';
-	if(module=='module'){
-		moduleName='模块管理';
-	}else if(module=='category'){
-		moduleName='商户分类管理';
-	}else if(module=='district'){
-		moduleName='商户地区管理';
-	}else if(module=='admin'){
-		moduleName='系统用户管理';
-	}
-	$('#dialogOKModalBody').html(message+', <span id="dialogOkCountdown">3</span>'+'秒后返回'+moduleName+'首页');
-	var j=3;
-	var dialogOKInterval=setInterval(function(){
-		if (j == 1) {
-			$('#dialogOKbutton').click();
-		}
-		$('#dialogOkCountdown').text(j);
-		j--;
-	},1000);
-	
-	$('#dialogOKbutton').bind('click',function(){
-		$('#dialogOKModal').modal('hide');
-		clearInterval(dialogOKInterval);
-		if($.isFunction(fun)){
-			fun();
-		}
-		$('#dialogOKbutton').unbind('click');
-	});
-	$('#dialogOKModal').modal('show');
-}
-
-function dialogformModalHide(){
-	$('#dialogformModal').modal('hide');
-	go_href(window.location.href);
-}
-function ajaxButtonAction(module,action,fun,url,funcall){
-	if(action=='添加' || action=='编辑'){
-		dialogFormvalidate.resetForm();
-		if(action=='添加'){
-			$('#dialogformModal').find('form')[0].reset();
-		}
-		$('#dialogformModalHeader').text(action+module);
-		$('#dialogformModal').on('show.bs.modal', function (e) {
-			if($.isFunction(fun)){
-				fun();			
-			}			
-		});
-		$('#dialogformModalOkbutton').unbind('click');
-		$('#dialogformModalOkbutton').bind('click',function(){
-			var form=$('#dialogformModal').find('form');
-			var url=form.attr('action');
-			if(action=='添加'){
-				url=url.replace('edit.json','add.json');
-			}else if(action=='编辑'){
-				url=url.replace('add.json','edit.json');
-			}
-			form.attr('action',url);
-			$('#dialogformModal').find('form').submit();
-		});
-		$('#dialogformModal').modal('show');
-	}else if(action=='删除'){
-		var checkboxs=$('#resultTable').find('input[type="checkbox"][name="id"]:checked');
-		if(checkboxs.length<=0){
-			dialogOk("请至少选择一条数据进行操作");
-			return;
-		}
-		dialogConfirm('此操作不可恢复，确认删除？',function(){
-			var ids = new Array(); 
-			checkboxs.each(function(i){
-				ids.push($(this).val()); 
-			});
-			ajaxRequestFormData(url,{ids:ids},function(data){
-				if(data.code==200){
-					if($.isFunction(funcall)){
-						funcall();			
-					}else{
-						auto_href();
-					}										
-				}else{
-					dialogOk(data.message);
-				}
-			});
-		});	
-	}	
-}
-
-function ajaxUpdateButtonAction(type,message,funcall){
-	if(type==1){//确认操作
-		var checkboxs=$('#resultTable').find('input[type="checkbox"][name="id"]:checked');
-		if(checkboxs.length<=0){
-			dialogOk("请至少选择一条数据进行操作");
-			return;
-		}
-		dialogConfirm(message,function(){
-			var ids = new Array(); 
-			checkboxs.each(function(i){
-				ids.push($(this).val()); 
-			});
-			var url=$('#dialog-form-ok').attr('action');
-			var params=$('#dialog-form-ok').serializeObject();
-			params.ids=ids;
-			ajaxRequestFormData(url,params,function(data){
-				if(data.code==200){
-					ajaxPagingLoad('search-form');										
-				}else{
-					dialogOk(data.message);
-				}
-			});
-		});		
-	}else if(type==2){
-		var checkboxs=$('#resultTable').find('input[type="checkbox"][name="id"]:checked');
-		if(checkboxs.length<=0){
-			dialogOk("请至少选择一条数据进行操作");
-			return;
-		}
-		dialogFormvalidate.resetForm();
-		$('#dialogformModalOkbutton').unbind('click');
-		$('#dialogformModalOkbutton').bind('click',function(){
-			$('#dialogformModal').find('form').submit();
-		});
-		$('#dialogformModal').modal('show');
-	}
-}
-
-function ajaxConfirmAction(uaction,params, message, funcall) {
-	var checkboxs = $('#resultTable').find('input[type="checkbox"][name="id"]:checked');
-	if (checkboxs.length <= 0) {
-		dialogOk("请至少选择一条数据进行操作");
-		return;
-	}
-	dialogConfirm(message, function() {
-		var ids = new Array();
-		checkboxs.each(function(i) {
-			ids.push($(this).val());
-		});
-		var url = contextPath+'/'+module+'/'+uaction+'.json';
-		params.ids = ids;
-		ajaxRequestFormData(url, params, function(data) {
-			if (data.code == 200) {
-				ajaxPagingLoad('search-form');
-			} else {
-				dialogOk(data.message);
-			}
-		});
-	});
-}
-
-
 function ajaxActionConfirm(url,params,message,funcall){
 	dialogConfirm(message, function() {
 		ajaxRequestFormData(url, params, function(data) {
@@ -335,52 +134,6 @@ function ajaxActionConfirm(url,params,message,funcall){
 		});
 	});
 }
-
-function getSelectedIds(){
-	var checkboxs=$('#resultTable').find('input[type="checkbox"][name="id"]:checked');
-	var ids = new Array();
-	checkboxs.each(function(i) {
-		ids.push($(this).val());
-	});
-	return ids;
-}
-
-function getSelectedTargets(){
-	var checkboxs=$('#resultTable').find('input[type="checkbox"][name="id"]:checked');
-	var targets = new Array();
-	checkboxs.each(function(i) {
-		targets.push($(this).attr('target'));
-	});
-	return targets;
-}
-
-
-$(function(){
-	initSelectCheckBox();	
-});
-
-function initSelectCheckBox(){
-	var selectAllCheckBox=$('#resultTable input.checkboxall');
-	$('#resultTable input[type=checkbox][name=id]').bind('click',function(){
-		var allSize=$('#resultTable input[type=checkbox][name=id]').length;
-		var checkedSize=$('#resultTable input[type=checkbox][name=id]:checked').length;
-		if(allSize==checkedSize){
-			selectAllCheckBox. prop("checked", true);
-		}else{
-			selectAllCheckBox. prop("checked", false);
-		}
-	});
-	
-	selectAllCheckBox.bind('click',function(){
-		var checked=$(this).is(':checked');
-		if(checked){
-			$('#resultTable').find('input[type=checkbox][name=id]').prop("checked", true);
-		}else{
-			$('#resultTable').find('input[type=checkbox][name=id]').prop("checked", false);
-		}
-	});
-}
-
 
 function ajaxRequestJsonDate(url,params,callBack,extraData){
 	$.ajax({
@@ -442,10 +195,6 @@ function ajaxAutoRequestFormData(id,callBack){
 	});
 }
 
-function go_back(){
-	window.location.href=contextPath+'/'+module+'/index.htm';
-}
-
 function go_href(url){
 	window.location.href=url;
 }
@@ -470,8 +219,6 @@ $.fn.serializeObject = function()
     });
     return o;
 };
-
-
 
 //ajx 分页方法 开始
 function ajaxPagingLoad(formId,pagenum,pagesize){

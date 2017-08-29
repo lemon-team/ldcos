@@ -1,0 +1,160 @@
+<form class="form-inline page-row-top" role="form" ajaxDivId="ajaxResultDiv" id="search-form" action="/index.json" method="post">
+	<div class="row">
+	<div class="form-group col-xs-3">
+		<label>昵称:</label> 
+		<input type="text" name="nick">
+	</div>
+	<div class="form-group col-xs-3">
+		<label style="width: 60px; text-align: right;">手机号:</label> 
+		<input type="text" name="mobile">
+	</div>
+	<div class="form-group col-xs-3">
+		<label>性别:</label> 
+		<select name="sex" class="form-control" style="width: 166px;">
+			<option value="">不限</option>
+			<option value="0">女</option>
+			<option value="1">男</option>
+			<option value="-1">保密</option>
+		</select>
+	</div>
+	<div class="form-group col-xs-3">
+	</div>
+	</div>
+	<div class="row page-row-top">
+	<div class="form-group col-xs-3">
+		<label>设备:</label> 
+		<select name="device" class="form-control" style="width: 166px;">
+			<option value="">不限</option>
+			<option value="ios">ios</option>
+			<option value="android">android</option>
+		</select>
+	</div>
+	<div class="form-group col-xs-3">
+		<label>注册日期:</label> 
+		<div class="input-group">
+			<input type="text" id="startTime" name="startTime" readonly="readonly" class="form-control" style="width: 130px;">
+			<span class="input-group-addon">
+				<i class="ace-icon fa fa-calendar"></i>
+			</span>
+		</div>
+	</div>
+	<div class="form-group col-xs-3">
+		<label style="width: 32px;"></label> 
+		<div class="input-group">
+			<input type="text" id="endTime" name="endTime" readonly="readonly" class="form-control" style="width: 130px;">
+			<span class="input-group-addon">
+				<i class="ace-icon fa fa-calendar"></i>
+			</span>
+		</div>
+	</div>
+	<div class="form-group col-xs-3"> 
+		<button class="btn btn-primary btn-sm" onclick="ajaxPagingLoad('search-form',1,30);" type="button">
+		<i class="ace-icon fa fa-search align-top bigger-125"></i>搜索
+	</button>
+	</div>
+	<div class="form-group col-xs-3">
+	</div>
+	</div>
+</form>
+<div class="row" style="margin-top: 20px;">
+	<div class="col-xs-12">
+	
+	<button class="btn btn-primary btn-sm" onclick="userAjaxConfirmAction(0);">
+		<i class="ace-icon fa fa-unlock align-top bigger-125"></i>解冻
+	</button>
+	<button class="btn btn-danger btn-sm" onclick="userAjaxConfirmAction(1);">
+		<i class="ace-icon fa fa-lock align-top bigger-125"></i>冻结
+	</button>
+	</div>
+</div>
+<div class="row" style="margin-top: 10px;">
+	<div class="col-xs-12" id="ajaxResultDiv">
+		
+	</div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="dialogDetailModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabe3">
+	<div class="modal-dialog" role="document" style="padding-top:6%;">
+		<div class="modal-content" style="width:600px;">
+			<div class="modal-header" style="padding-top: 0px;padding-bottom: 0px;">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h4 class="blue bigger">详细信息</h4>
+			</div>
+
+			<div class="modal-body" id="dialogDetaiModalbody" style="max-height:500px ;overflow:auto;overflow-y:scroll;">
+				
+			</div>
+			<div class="modal-footer">
+<!-- 				<button class="btn btn-sm btn-primary" id="dialogDetailButton" data-dismiss="modal"> -->
+<!-- 					<i class="ace-icon fa fa-check"></i> 确认 -->
+<!-- 				</button> -->
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+	$(function() {
+// 			ajaxPagingLoad('search-form',1,30);		
+// 			$('#startTime').datepicker({
+// 				showOtherMonths: true,
+// 				selectOtherMonths: true,
+// 			    dateFormat:'yy-mm-dd',
+// 			    onSelect: function( startDate ) {
+// 			        var $startDate = $( "#startTime" );
+// 			        var $endDate = $('#endTime');
+// 			        var endDate = $endDate.datepicker( 'getDate' );
+// 			        if(endDate < startDate){
+// 			            $endDate.datepicker('setDate', startDate - 3600*1000*24);
+// 			        }
+// 			        $endDate.datepicker( "option", "minDate", startDate );
+// 			    }
+// 			});
+// 			$('#endTime').datepicker({
+// 				showOtherMonths: true,
+// 				selectOtherMonths: true,
+// 			    dateFormat:'yy-mm-dd',
+// 			    onSelect: function( endDate ) {
+// 			        var $startDate = $( "#startTime" );
+// 			        var $endDate = $('#endTime');
+// 			        var startDate = $startDate.datepicker( "getDate" );
+// 			        if(endDate < startDate){
+// 			            $startDate.datepicker('setDate', startDate + 3600*1000*24);
+// 			        }
+// 			        $startDate.datepicker( "option", "maxDate", endDate );
+// 			    }
+// 			});
+	});	
+	
+	function userAjaxConfirmAction(locked) {
+		var checkboxs = $('#resultTable').find('input[type="checkbox"][name="id"]:checked');
+		if (checkboxs.length <= 0) {
+			dialogOk("请至少选择一条数据进行操作");
+			return;
+		}
+		var message='';
+		var flag=true;
+		if(locked==1){//上架
+			message="确认锁定选择用户？";
+		}else if(locked==0){//下架
+			message="确认解锁选择用户？";
+		}
+		var params={};
+		var ids = new Array();
+		checkboxs.each(function(i) {
+			ids.push($(this).val());
+		});
+		var url = contextPath+'/'+module+'/update.json';
+		params.ids = ids;
+		params.locked=locked;
+		dialogConfirm(message, function() {
+			ajaxRequestFormData(url, params, function(data) {
+				if (data.code == 200) {
+					ajaxPagingLoad('search-form');
+				} else {
+					dialogOk(data.message);
+				}
+			});
+		});
+	}
+</script>
